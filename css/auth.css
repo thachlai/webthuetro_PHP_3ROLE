@@ -1,0 +1,105 @@
+/* public/css/auth.css */
+
+/* 1. Bố cục chung của trang Auth */
+.auth-page {
+    display: flex;
+    justify-content: center; /* Căn nội dung theo chiều ngang (giữa) */
+    align-items: center;     /* Căn nội dung theo chiều dọc (giữa) */
+    min-height: 100vh;       /* Đảm bảo chiếm toàn bộ chiều cao màn hình */
+    background-color: var(--main-bg-color); /* Sử dụng màu nền chung */
+    padding: 20px;
+}
+
+/* 2. Box chứa nội dung chính của form (Khung Auth) */
+.auth-box {
+    width: 100%;
+    max-width: 450px; /* Chiều rộng tối đa vừa phải */
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+/* 3. Tiêu đề (Heading) */
+.auth-box h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* 4. Khung Thông báo (Lỗi, Thành công) */
+.notification-box {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    font-size: 0.9em;
+}
+
+.notification-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.notification-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+/* 5. Giao diện Form Input */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.95em;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* 6. Nút Input (Submit Button) */
+.auth-submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.05em;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.auth-submit-btn:hover {
+    background-color: #0056b3;
+}
+
+/* 7. Footer/Links khác */
+.auth-links {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+}

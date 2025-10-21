@@ -1,0 +1,230 @@
+/* public/css/main.css - Không sử dụng Bootstrap */
+
+/* ---------------------------------- */
+/* 1. KHUNG CHUNG VÀ BIẾN (VARIABLES) */
+/* ---------------------------------- */
+:root {
+    --sidebar-width: 250px;       
+    --header-height: 60px;        
+    --main-bg-color: #f8f9fa;     
+    --primary-color: #007bff;     
+    --sidebar-bg-color: #343a40;  
+    --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--main-bg-color);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Ngăn chặn cuộn ngang khi sidebar ẩn/hiện */
+}
+
+/* ---------------------------------- */
+/* 2. HEADER (Cố định trên cùng) */
+/* ---------------------------------- */
+.main-header {
+    height: var(--header-height);
+    background-color: #ffffff;
+    box-shadow: var(--header-shadow);
+    display: flex; /* Dùng Flexbox */
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: fixed; 
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Nút ẩn hiện Sidebar */
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: #333;
+    padding: 5px;
+}
+
+.sidebar-toggle-btn:hover {
+    color: var(--primary-color);
+}
+
+/* Logo */
+.logo-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.logo-link img {
+    height: 40px;
+    display: block;
+}
+
+/* ---------------------------------- */
+/* 3. MENU ĐIỀU HƯỚNG CHÍNH (Header Right) */
+/* ---------------------------------- */
+.header-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Khoảng cách giữa các mục menu */
+}
+
+.header-nav ul li a {
+    text-decoration: none;
+    color: #333;
+    padding: 10px 5px;
+    display: block;
+}
+
+.header-nav ul li a:hover {
+    color: var(--primary-color);
+}
+
+/* Dropdown Container */
+.dropdown-container {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%; /* Đặt menu sổ xuống dưới link cha */
+    right: 0;  /* Căn lề phải cho menu user */
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 5px 0;
+    margin: 0;
+    min-width: 200px;
+    z-index: 100;
+    display: none; /* Mặc định ẩn, sẽ hiện bằng JS */
+}
+
+.dropdown-container:hover .dropdown-menu {
+    display: block; /* Hiện menu khi hover (hoặc dùng JS) */
+}
+
+.dropdown-menu li {
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-menu li a {
+    padding: 8px 15px;
+    color: #333;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-header {
+    padding: 8px 15px;
+    font-weight: bold;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 5px;
+}
+
+.dropdown-divider {
+    height: 1px;
+    margin: 5px 0;
+    background-color: #eee;
+}
+
+.user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ---------------------------------- */
+/* 4. SIDEBAR (Cố định bên trái) */
+/* ---------------------------------- */
+.main-sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--sidebar-bg-color);
+    color: #ffffff;
+    position: fixed; 
+    top: 0;
+    left: 0;
+    z-index: 999;
+    padding-top: var(--header-height); 
+    transition: transform 0.3s ease;
+    overflow-y: auto; 
+}
+
+/* Menu trong Sidebar */
+.sidebar-menu {
+    list-style: none;
+    padding: 10px 0;
+    margin: 0;
+}
+
+.sidebar-menu li a {
+    display: flex; /* Dùng flex để căn chỉnh icon và chữ */
+    align-items: center;
+    padding: 12px 20px;
+    color: #ced4da;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.sidebar-menu li a:hover,
+.sidebar-menu li a.active {
+    background-color: #495057;
+    color: #ffffff;
+}
+
+.sidebar-menu li a i {
+    margin-right: 10px; /* Khoảng cách giữa icon và chữ */
+}
+
+/* ---------------------------------- */
+/* 5. BỐ CỤC NỘI DUNG CHÍNH (CONTENT) */
+/* ---------------------------------- */
+
+.main-content {
+    /* Đảm bảo nội dung không bị Header che */
+    padding-top: var(--header-height); 
+    /* Quan trọng nhất: Đẩy nội dung ra khỏi Sidebar */
+    margin-left: var(--sidebar-width); 
+    padding: 20px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease; 
+}
+
+/* ---------------------------------- */
+/* 6. TRẠNG THÁI ẨN (DÙNG CHO JS) */
+/* ---------------------------------- */
+
+/* 1. Trạng thái ẩn của Sidebar (Thêm class này vào <body> bằng JS) */
+.sidebar-collapsed .main-sidebar {
+    /* Dịch chuyển Sidebar sang trái khỏi màn hình */
+    transform: translateX(calc(0px - var(--sidebar-width)));
+}
+
+/* 2. Trạng thái ẩn của Nội dung chính */
+.sidebar-collapsed .main-content {
+    /* Kéo nội dung chính sát vào lề trái (sidebar-width -> 0) */
+    margin-left: 0; 
+}
