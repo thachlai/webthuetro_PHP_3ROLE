@@ -58,7 +58,7 @@ CREATE TABLE Promotion_Packages (
     duration_days INT NOT NULL,
     feature_video_allowed TINYINT(1) DEFAULT 0,
     is_priority_display TINYINT(1) DEFAULT 0, -- Tối ưu: Quyền ưu tiên hiển thị
-    is_active TINYINT(1) DEFAULT 1
+    status TINYINT(1) DEFAULT 1 comment "măc đinh là 1 mở , 0 là ẩn"
 );
 
 -- 7. Bảng Transactions / xử lý thanh toán
@@ -86,7 +86,7 @@ CREATE TABLE User_Subscriptions (
     package_id INT NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
-    status ENUM('active', 'expired') DEFAULT 'active',
+    status TINYINT(1) DEFAULT 1 comment "măc đinh là 1 hiệu lực , 0 là hết hạn"
     is_current TINYINT(1) DEFAULT 1, -- Tối ưu: Đánh dấu gói đang có hiệu lực HIỆN TẠI
     
     FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id),

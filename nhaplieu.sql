@@ -246,3 +246,14 @@ INSERT INTO Wards (district_id, name, status) VALUES
 (2, 'Hàng Đào', 1),
 (2, 'Hàng Gai', 1),
 (2, 'Lý Thái Tổ', 1);
+
+
+
+INSERT INTO Promotion_Packages (name, price, duration_days, feature_video_allowed, is_priority_display, is_active) VALUES
+('Gói Thường 1', 100000.00, 7, 0, 0, 1),
+('Gói Thường 2', 150000.00, 15, 0, 1, 1),
+('Gói VIP 1', 300000.00, 30, 1, 1, 1),
+('Gói VIP 2', 500000.00, 60, 1, 1, 1),
+('Gói Khuyến Mãi', 50000.00, 3, 0, 0, 0),
+('Gói Thử Nghiệm', 0.00, 1, 0, 0, 1),
+('Gói Đặc Biệt', 1000000.00, 90, 1, 1, 1);
