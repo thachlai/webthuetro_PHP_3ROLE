@@ -55,7 +55,7 @@
         <li>
             <a href="#"><i class="fa fa-shopping-cart"></i> Quản lý Gói mua <i class="fa fa-caret-down" style="margin-left:auto;"></i></a>
             <ul class="sidebar-submenu">
-                <li><a href="list_package_purchase.php">Danh sách gói mua</a></li>
+                <li><a href="list_usersubscription.php">Danh sách gói mua</a></li>
             </ul>
         </li>
 

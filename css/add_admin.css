@@ -1,0 +1,85 @@
+/* ---------------------------------- */
+/* 1. Tiêu đề & Thông báo */
+/* ---------------------------------- */
+
+.page-title h2 {
+    padding-top: 60px;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.message {
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* ---------------------------------- */
+/* 2. Form thêm dữ liệu */
+/* ---------------------------------- */
+.add-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.add-form .form-group {
+    margin-bottom: 15px;
+}
+
+.add-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.add-form input,
+.add-form select,
+.add-form textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* ---------------------------------- */
+/* 3. Form actions */
+/* ---------------------------------- */
+.form-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.form-actions .btn-add {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.form-actions .btn-reset {
+    background-color: #ffc107;
+    color: #000;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.form-actions .btn-back {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}

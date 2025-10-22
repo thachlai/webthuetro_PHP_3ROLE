@@ -249,7 +249,7 @@ INSERT INTO Wards (district_id, name, status) VALUES
 
 
 
-INSERT INTO Promotion_Packages (name, price, duration_days, feature_video_allowed, is_priority_display, is_active) VALUES
+INSERT INTO Promotion_Packages (name, price, duration_days, feature_video_allowed, is_priority_display, status) VALUES
 ('Gói Thường 1', 100000.00, 7, 0, 0, 1),
 ('Gói Thường 2', 150000.00, 15, 0, 1, 1),
 ('Gói VIP 1', 300000.00, 30, 1, 1, 1),

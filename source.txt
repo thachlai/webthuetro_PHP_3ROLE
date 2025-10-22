@@ -1,16 +1,35 @@
 -htdocs
 --/ floder admin
+    ---index.php
+    ---list_account.php
+    ---list_cattergory.php
+    ---list_district.php
+    ---list_package.php
+    ---list_province.php
+    ---list_usersubscription.php
+    list_ward.php
 --/ floder user
+    ---/index.php
 --/ floder staff
 --/ floder include
----/ conn.php
----/ header.php 
----/sidebar.php
----/footer.php chưa có
+    ---conn.php
+    ---header.php 
+    ---sidebar.php
+    ---function.php
+    ---footer.php chưa có
 --/ floder upload
----/ floder avatar
----/ floder logo
----/ floder slider
+    ---/ floder avatar
+        ---- default.png
+        ---- ảnh của người dùng.png
+    ---/ floder logo
+        ---- logo.png logo của web
+    ---/ floder slider
+        ----slider1.png (VD)
 --/ floder auth
----/ signup.php
----/ login.php
+    ---login.php
+    ---signup.php
+    ---logout.php
+--/ floder css
+    ---main.css
+    ---auth.css
+    ---list_admin.css

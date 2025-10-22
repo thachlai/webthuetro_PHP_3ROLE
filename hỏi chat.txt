@@ -1,0 +1,2 @@
+sao nó không gióng các trang list khác vậy 
+ý tui là nó chỉ ko có nút đổi trạng thái như các trang khác thôi vẫn vó filter vẫn có bagnr vẫn có phân trang
