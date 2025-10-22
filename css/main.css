@@ -99,47 +99,52 @@ body {
     position: relative;
 }
 
-.dropdown-menu {
+/* ==== DROPDOWN (Hover mở tự động, không cần click) ==== */
+.dropdown-container {
+    position: relative;
+}
+
+.dropdown-container .dropdown-menu {
     position: absolute;
-    top: 100%; /* Đặt menu sổ xuống dưới link cha */
-    right: 0;  /* Căn lề phải cho menu user */
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     list-style: none;
     padding: 5px 0;
     margin: 0;
     min-width: 200px;
-    z-index: 100;
-    display: none; /* Mặc định ẩn, sẽ hiện bằng JS */
+    display: none;
+    flex-direction: column;
+    z-index: 200;
 }
 
-.dropdown-container:hover .dropdown-menu {
-    display: block; /* Hiện menu khi hover (hoặc dùng JS) */
+/* 🟢 Khi hover vào container, menu tự mở */
+.dropdown-container:hover > .dropdown-menu {
+    display: flex;
 }
 
-.dropdown-menu li {
-    padding: 0;
-    margin: 0;
-}
-
+/* Item trong dropdown */
 .dropdown-menu li a {
-    padding: 8px 15px;
+    padding: 10px 15px;
     color: #333;
     text-decoration: none;
     display: block;
 }
 
 .dropdown-menu li a:hover {
-    background-color: #f1f1f1;
+    background-color: #f5f5f5;
+    color: var(--primary-color);
 }
 
+/* Header nhỏ trong dropdown */
 .dropdown-header {
     padding: 8px 15px;
     font-weight: bold;
     color: #555;
     border-bottom: 1px solid #eee;
-    margin-bottom: 5px;
 }
 
 .dropdown-divider {
@@ -148,13 +153,16 @@ body {
     background-color: #eee;
 }
 
+/* Ảnh user */
 .user-avatar {
     width: 30px;
     height: 30px;
     border-radius: 50%;
     object-fit: cover;
-    display: block;
+    vertical-align: middle;
+    cursor: pointer;
 }
+
 
 /* ---------------------------------- */
 /* 4. SIDEBAR (Cố định bên trái) */

@@ -1,0 +1,16 @@
+-htdocs
+--/ floder admin
+--/ floder user
+--/ floder staff
+--/ floder include
+---/ conn.php
+---/ header.php 
+---/sidebar.php
+---/footer.php chưa có
+--/ floder upload
+---/ floder avatar
+---/ floder logo
+---/ floder slider
+--/ floder auth
+---/ signup.php
+---/ login.php

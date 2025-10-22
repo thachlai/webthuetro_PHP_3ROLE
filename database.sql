@@ -9,7 +9,7 @@ CREATE TABLE users (
     phone VARCHAR(15), 
     address VARCHAR(255),
     gender ENUM('male', 'female', 'other') DEFAULT 'other', -- Tối ưu: Dùng ENUM thay vì VARCHAR
-    avatar VARCHAR(255) DEFAULT 'uploads/user/default.png', 
+    avatar VARCHAR(255) DEFAULT 'upload/user/default.png', 
     birthday DATE, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     role TINYINT DEFAULT 1, -- 0=admin, 1=người dùng (tìm trọ), 2=chủ trọ
@@ -160,3 +160,4 @@ CREATE TABLE comments (
     -- Tự tham chiếu
     FOREIGN KEY (parent_comment_id) REFERENCES comments(id_comment) ON DELETE CASCADE
 );
+
