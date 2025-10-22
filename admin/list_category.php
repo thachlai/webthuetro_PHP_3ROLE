@@ -4,6 +4,7 @@ include __DIR__ . '/../include/conn.php';
 include __DIR__ . '/../include/admin_header.php';
 include __DIR__ . '/../include/admin_sidebar.php';
 include __DIR__ . '/../include/function.php';
+check_login();
 check_admin();
 // =================== Pagination & Filter ===================
 $search = trim($_GET['search'] ?? '');

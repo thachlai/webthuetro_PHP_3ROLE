@@ -4,8 +4,8 @@ include __DIR__ . '/../include/conn.php';
 include __DIR__ . '/../include/admin_header.php';
 include __DIR__ . '/../include/admin_sidebar.php';
 include __DIR__ . '/../include/function.php';
+check_login();
 check_admin();
-
 // =================== Pagination & Filter ===================
 $search = trim($_GET['search'] ?? '');
 $status_filter = $_GET['status'] ?? '';
@@ -111,7 +111,7 @@ $result = mysqli_stmt_get_result($stmt);
                     <td><?php echo $row['is_priority_display'] ? 'Có' : 'Không'; ?></td>
                     <td><?php echo $row['status'] ? 'Mở' : 'Khóa'; ?></td>
                     <td class="actions">
-                        <button class="detail" onclick="location.href='edit_package.php?id=<?php echo $row['package_id']; ?>'">Sửa</button>
+                        <button class="detail" onclick="location.href='detail_package.php?id=<?php echo $row['package_id']; ?>'">Sửa</button>
                         <button class="delete" onclick="if(confirm('Bạn có chắc muốn xóa?')) location.href='../include/delete.php?id=<?php echo $row['package_id']; ?>&table=Promotion_Packages'">Xóa</button>
                         <button class="toggle" onclick="location.href='../include/status.php?id=<?php echo $row['package_id']; ?>&table=Promotion_Packages&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>'">Đổi trạng thái</button>
                     </td>

@@ -1,4 +1,6 @@
 <?php
+// Không có dòng trắng trước hoặc sau thẻ PHP
+
 function check_login() {
     if (!isset($_SESSION['user_id'])) {
         header('Location: ../auth/login.php');

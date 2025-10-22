@@ -1,0 +1,125 @@
+/* ---------------------------------- */
+/* 1. Tiêu đề & Thông báo */
+/* ---------------------------------- */
+.page-title h2 {
+    padding-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.6em;
+    color: #333;
+}
+
+.message {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+/* ---------------------------------- */
+/* 2. Wrapper chi tiết */
+/* ---------------------------------- */
+.detail-wrapper {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.detail-left {
+    flex: 0 0 70%;
+}
+
+.detail-right {
+    flex: 0 0 30%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.detail-right img,
+.detail-right video {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+/* ---------------------------------- */
+/* 3. Các item thông tin */
+/* ---------------------------------- */
+.detail-item {
+    margin-bottom: 12px;
+    display: flex;
+}
+
+.detail-item .label {
+    width: 150px;
+    font-weight: bold;
+    color: #555;
+}
+
+.detail-item .value {
+    flex: 1;
+    color: #333;
+}
+
+.detail-item input,
+.detail-item select,
+.detail-item textarea {
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* ---------------------------------- */
+/* 4. Comment / nội dung phụ nằm dưới */
+/* ---------------------------------- */
+.detail-comments {
+    width: 100%;
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.comment-item {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* ---------------------------------- */
+/* 5. Nút hành động */
+/* ---------------------------------- */
+.detail-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.detail-actions button {
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.detail-actions .btn-edit {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.detail-actions .btn-back {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.detail-actions .btn-reload {
+    background-color: #ffc107;
+    color: #000;
+}
