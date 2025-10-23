@@ -38,21 +38,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 mysqli_stmt_bind_result($stmt, $user_id, $fullname, $role, $avatar);
                 mysqli_stmt_fetch($stmt);
 
-                // Lưu session
-                $_SESSION['user_id'] = $user_id;
-                $_SESSION['fullname'] = $fullname;
-                $_SESSION['role'] = $role;
-                $_SESSION['avatar'] = $avatar;
+            // Lưu session
+            $_SESSION['user_id'] = $user_id;
+            $_SESSION['fullname'] = $fullname;
+            $_SESSION['role'] = $role;
+            $_SESSION['avatar'] = $avatar;
 
-                // Chuyển hướng theo vai trò
-                if ($role === 0) {
-                    header("Location: ../admin/index.php");
-                } elseif ($role === 1) {
-                    header("Location: ../user/index.php");
-                } else {
-                    header("Location: ../index.php");
-                }
-                exit; // quan trọng: dừng script ngay sau header
+            // Chuyển hướng theo vai trò
+            if ($role === 0) {
+                header("Location: ../admin/index.php");
+            } elseif ($role === 1) {
+                header("Location: ../user/index.php");
+            } elseif ($role === 2) {
+                header("Location: ../staff/index.php");
+            } else {
+                header("Location: ../index.php");
+            }
+            exit; // dừng script ngay sau header
+
             } else {
                 $errors[] = "Email hoặc mật khẩu không đúng.";
             }

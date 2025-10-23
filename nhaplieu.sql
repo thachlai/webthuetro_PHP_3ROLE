@@ -257,3 +257,42 @@ INSERT INTO Promotion_Packages (name, price, duration_days, feature_video_allowe
 ('Gói Khuyến Mãi', 50000.00, 3, 0, 0, 0),
 ('Gói Thử Nghiệm', 0.00, 1, 0, 0, 1),
 ('Gói Đặc Biệt', 1000000.00, 90, 1, 1, 1);
+
+
+-- Tạo transaction cho user 26 mua gói 9
+INSERT INTO Transactions (user_id, order_id, amount, package_id, trans_id, pay_time, status)
+VALUES (
+    26, 
+    'ORDER-TEST-001', 
+    10000.00, 
+    9, 
+    'TRANS-TEST-001', 
+    NOW(), 
+    'success'
+);
+
+-- Lấy ID của transaction vừa tạo
+SET @last_trans_id = LAST_INSERT_ID();
+
+-- Tạo user_subscription từ transaction này
+INSERT INTO User_Subscriptions (transaction_id, user_id, package_id, start_time, end_time, status, is_current)
+VALUES (
+    @last_trans_id,
+    26,
+    9,
+    NOW(),
+    DATE_ADD(NOW(), INTERVAL 1 MONTH),  -- ví dụ gói 1 tháng
+    1,  -- active
+    1   -- hiện tại
+);
+
+
+
+INSERT INTO Transactions
+(transaction_id, user_id, order_id, amount, package_id, trans_id, transaction_time, pay_time, error_code, status)
+VALUES
+(1000, 26, 'ORDER1000', 10000.00, 10, 'TXN1000', NOW(), NOW(), NULL, 'success');
+INSERT INTO User_Subscriptions
+(transaction_id, user_id, package_id, start_time, end_time, status, is_current)
+VALUES
+(1000, 26, 10, NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY), 1, 1);

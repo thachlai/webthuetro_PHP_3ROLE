@@ -213,7 +213,7 @@ body {
 
 .main-content {
     /* Đảm bảo nội dung không bị Header che */
-    padding-top: var(--header-height); 
+    padding-top: 80px; /* cao hơn header 1 chút */ 
     /* Quan trọng nhất: Đẩy nội dung ra khỏi Sidebar */
     margin-left: var(--sidebar-width); 
     padding: 20px;

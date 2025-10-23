@@ -42,7 +42,10 @@ $base_path = '../'; // Cần điều chỉnh nếu file ở thư mục con
                     <?php endif; ?>
                 </ul>
             </li>
-
+            <?php if(isset($_SESSION['user_id']) && $_SESSION['role'] == 2): ?>
+    <li><a href="../staff/add_room.php">Đăng tin</a></li>
+<?php endif; ?>
+            
             <li><a href="<?php echo $base_path; ?>user/posts.php">Bài đăng</a></li>
             <li><a href="<?php echo $base_path; ?>user/find_posts.php">Bài tìm trọ</a></li>
 

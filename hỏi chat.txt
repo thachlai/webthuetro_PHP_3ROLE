@@ -1,2 +1,11 @@
-sao nó không gióng các trang list khác vậy 
-ý tui là nó chỉ ko có nút đổi trạng thái như các trang khác thôi vẫn vó filter vẫn có bagnr vẫn có phân trang
+dashboard_staff.php – trang chính, thống kê số trọ, lượt xem, gói mua.
+
+list_room.php – danh sách các trọ mà họ đã đăng.
+
+add_room.php – thêm trọ mới.
+
+detail_room.php – chi tiết và chỉnh sửa trọ (chỉ trọ của chính họ).
+
+my_subscriptions.php – xem gói đã mua, gói đang hiệu lực.
+
+profile.php – chỉnh sửa thông tin cá nhân.
