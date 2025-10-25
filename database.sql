@@ -86,7 +86,7 @@ CREATE TABLE User_Subscriptions (
     package_id INT NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
-    status TINYINT(1) DEFAULT 1 comment "măc đinh là 1 hiệu lực , 0 là hết hạn"
+    status TINYINT(1) DEFAULT 1 comment "măc đinh là 1 hiệu lực , 0 là hết hạn",
     is_current TINYINT(1) DEFAULT 1, -- Tối ưu: Đánh dấu gói đang có hiệu lực HIỆN TẠI
     
     FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id),

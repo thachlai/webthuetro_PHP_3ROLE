@@ -123,3 +123,61 @@
     background-color: #ffc107;
     color: #000;
 }
+/* * Styles cho khu vực xem trước ảnh/video
+ * Dán các styles này vào file detail_admin.css 
+ */
+
+/* Khu vực chứa tất cả các file preview (ảnh/video) */
+.file-preview-container {
+    display: flex; 
+    flex-wrap: wrap;
+    gap: 15px; /* Khoảng cách giữa các item */
+    padding: 10px;
+    border: 1px dashed #ccc; /* Viền nét đứt nhẹ */
+    border-radius: 8px;
+    margin-top: 15px;
+    background-color: #fcfcfc;
+    min-height: 50px; /* Chiều cao tối thiểu khi chưa có file */
+    align-items: center; 
+    justify-content: flex-start;
+}
+
+/* Khung chứa từng file preview */
+.preview-item {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 5px;
+    max-width: 120px; /* Giới hạn chiều rộng cho thumbnail */
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.2s;
+}
+.preview-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ảnh và Video thumbnail */
+.preview-item img, .preview-item video {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 90px; /* Giới hạn chiều cao của thumbnail media */
+    object-fit: cover; /* Đảm bảo hình ảnh/video lấp đầy khung */
+    border-radius: 4px;
+    margin-bottom: 5px;
+    background-color: #eee;
+}
+
+/* Tên file */
+.file-name {
+    display: block;
+    font-size: 0.7rem; /* Kích thước nhỏ hơn */
+    color: #6c757d;
+    white-space: nowrap; /* Ngăn xuống dòng */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Thêm dấu ba chấm */
+    padding: 0 2px;
+}
