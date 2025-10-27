@@ -10,7 +10,7 @@
         </li>
 
         <li>
-            <a href="../staff/add_room.php"><i class="fa fa-edit"></i> Đăng tin mới</a>
+            <a href="../staff/add_post.php"><i class="fa fa-edit"></i> Đăng tin mới</a>
         </li>
 
         <li>

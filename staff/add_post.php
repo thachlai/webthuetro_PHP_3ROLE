@@ -31,7 +31,7 @@ if($subscription){
 
     // Lấy thông tin gói
     $pkg_sql = "SELECT feature_video_allowed, is_priority_display 
-                 FROM Promotion_Packages WHERE package_id=?";
+                  FROM Promotion_Packages WHERE package_id=?";
     $stmt_pkg = $conn->prepare($pkg_sql);
     $stmt_pkg->bind_param("i", $subscription['package_id']);
     $stmt_pkg->execute();
@@ -44,17 +44,26 @@ if($subscription){
     }
 }
 
-// =================== Filter kiểu list_ward ===================
+// =================== Lấy danh sách Danh mục đang hoạt động ===================
+$categories = [];
+$cat_res = mysqli_query($conn, "SELECT category_id, name FROM Categories WHERE status=1 ORDER BY name ASC");
+if($cat_res) {
+    while ($row = mysqli_fetch_assoc($cat_res)) $categories[] = $row;
+}
+
+// =================== Filter kiểu list_ward (Giữ giá trị cũ nếu có) ===================
+// Lấy giá trị đã chọn sau khi POST hoặc từ query string
 $province_filter = intval($_GET['province'] ?? ($_POST['province'] ?? 0));
 $district_filter = intval($_GET['district'] ?? ($_POST['district'] ?? 0));
 $ward_filter = intval($_GET['ward'] ?? ($_POST['ward'] ?? 0));
+$selected_category_id = intval($_POST['category_id'] ?? 0); 
 
-// Lấy danh sách tỉnh
+// Lấy danh sách tỉnh (Dùng cho dropdown đầu tiên)
 $provinces = [];
 $prov_res = mysqli_query($conn, "SELECT province_id, name FROM Provinces WHERE status=1 ORDER BY name ASC");
 while ($row = mysqli_fetch_assoc($prov_res)) $provinces[] = $row;
 
-// Lấy danh sách huyện nếu tỉnh đã chọn
+// Lấy danh sách huyện nếu tỉnh đã chọn (Chỉ dùng cho pre-population khi lỗi POST/reload)
 $districts = [];
 if ($province_filter) {
     $stmt2 = mysqli_prepare($conn, "SELECT district_id, name FROM Districts WHERE province_id=? AND status=1 ORDER BY name ASC");
@@ -65,7 +74,7 @@ if ($province_filter) {
     mysqli_stmt_close($stmt2);
 }
 
-// Lấy danh sách xã nếu huyện đã chọn
+// Lấy danh sách xã nếu huyện đã chọn (Chỉ dùng cho pre-population khi lỗi POST/reload)
 $wards = [];
 if ($district_filter) {
     $stmt3 = mysqli_prepare($conn, "SELECT ward_id, name FROM Wards WHERE district_id=? AND status=1 ORDER BY name ASC");
@@ -89,6 +98,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
     $province_id = intval($_POST['province'] ?? 0);
     $district_id = intval($_POST['district'] ?? 0);
     $ward_id = intval($_POST['ward'] ?? 0);
+    $category_id = intval($_POST['category_id'] ?? 0);
 
     $is_priority_post = 0;
     if($allow_priority && isset($_POST['is_priority_post'])){
@@ -100,6 +110,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
     if(!$price || $price <= 0) $errors[] = "Giá phải lớn hơn 0.";
     if(!$province_id || !$district_id || !$ward_id) $errors[] = "Vui lòng chọn đầy đủ Tỉnh/Huyện/Xã.";
     if(!$detailed_address) $errors[] = "Vui lòng nhập địa chỉ chi tiết.";
+    if(!$category_id) $errors[] = "Vui lòng chọn Danh mục cho bài đăng.";
 
     // =================== Lưu post ===================
     if(empty($errors)){
@@ -107,8 +118,10 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
         mysqli_begin_transaction($conn);
         $success = false;
         try {
-            $stmt = $conn->prepare("INSERT INTO posts (user_id, province_id, district_id, ward_id, title, description, price, deposit, area, detailed_address, is_priority_post, status, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?, 'pending', NOW())");
-            $stmt->bind_param("iiissdiddsi", $user_id, $province_id, $district_id, $ward_id, $title, $description, $price, $deposit, $area, $detailed_address, $is_priority_post);
+            // CẬP NHẬT: Thêm category_id vào INSERT statement
+            $stmt = $conn->prepare("INSERT INTO posts (user_id, category_id, province_id, district_id, ward_id, title, description, price, deposit, area, detailed_address, is_priority_post, status, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?, 'pending', NOW())");
+            // CẬP NHẬT: Thêm category_id (i) vào bind_param. Chuỗi types mới: "iiiissdiddsi"
+            $stmt->bind_param("iiiissdiddsi", $user_id, $category_id, $province_id, $district_id, $ward_id, $title, $description, $price, $deposit, $area, $detailed_address, $is_priority_post);
             
             if(!$stmt->execute()){
                  throw new Exception("Lỗi lưu dữ liệu Post: " . $stmt->error);
@@ -168,6 +181,14 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
         $province_filter = 0;
         $district_filter = 0;
         $ward_filter = 0;
+        $selected_category_id = 0;
+    } else {
+        // Nếu thất bại, giữ lại các giá trị đã chọn
+        $selected_category_id = intval($_POST['category_id'] ?? 0);
+        // Cần cập nhật lại filter nếu có lỗi POST
+        $province_filter = intval($_POST['province'] ?? 0);
+        $district_filter = intval($_POST['district'] ?? 0);
+        $ward_filter = intval($_POST['ward'] ?? 0);
     }
 }
 ?>
@@ -177,7 +198,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 
 <style>
-/* CSS cho phần thêm/xóa input */
+/* CSS cho phần thêm/xóa input (để lại vì nó cần cho HTML) */
 .file-input-group {
     display: flex;
     align-items: center;
@@ -207,34 +228,6 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
     margin-top: 10px;
     display: inline-block;
 }
-
-/* CSS cho phần Preview */
-.preview-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px dashed #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    min-height: 50px; /* Để dễ nhìn hơn khi chưa có file */
-}
-.file-preview-item {
-    width: 120px;
-    height: 120px;
-    overflow: hidden;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: relative;
-}
-.preview-thumbnail {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Đảm bảo ảnh/video vừa khung */
-    display: block;
-}
 </style>
 
 <div class="main-content">
@@ -255,6 +248,18 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
 
     <form method="POST" enctype="multipart/form-data" class="detail-wrapper">
         <div class="detail-left">
+            
+            <!-- KHU VỰC PREVIEW FILE TỔNG HỢP -->
+            <div class="detail-item" style="flex-direction: column; margin-bottom: 25px; padding-bottom: 10px; border-bottom: 1px dashed #ddd;">
+                <span class="label" style="width: auto; margin-bottom: 10px; padding-left: 0;">Danh sách Ảnh/Video đã chọn:</span>
+                <div id="combined-preview-container" class="file-preview-container">
+                    <!-- Vị trí hiển thị ảnh/video xem trước (Ảnh 1++, Video 1++,...) -->
+                    <span style="color: #999; font-style: italic;">Chưa có file nào được chọn.</span>
+                </div>
+            </div>
+            <!-- END NEW PREVIEW SECTION -->
+
+
             <div class="detail-item">
                 <span class="label">Tiêu đề:</span>
                 <input type="text" name="title" value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>" required>
@@ -280,6 +285,20 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
                 <input type="number" name="area" value="<?php echo htmlspecialchars($_POST['area'] ?? ''); ?>" min="1" step="any">
             </div>
             
+            <!-- TRƯỜNG DANH MỤC -->
+            <div class="detail-item">
+                <span class="label">Danh mục:</span>
+                <select name="category_id" required>
+                    <option value="">-- Chọn danh mục --</option>
+                    <?php foreach($categories as $cat): ?>
+                        <option value="<?php echo $cat['category_id']; ?>" 
+                            <?php if($cat['category_id'] == $selected_category_id) echo 'selected'; ?>>
+                            <?php echo htmlspecialchars($cat['name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
             <?php if($allow_priority): ?>
             <div class="detail-item">
                 <span class="label">Đăng tin ưu tiên (VIP):</span>
@@ -295,10 +314,10 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
                 <input type="text" name="detailed_address" value="<?php echo htmlspecialchars($_POST['detailed_address'] ?? ''); ?>" required>
             </div>
 
-            <!-- Tỉnh/Huyện/Xã -->
+            <!-- Tỉnh/Huyện/Xã: SỬ DỤNG AJAX -->
             <div class="detail-item">
                 <span class="label">Tỉnh:</span>
-                <select name="province" onchange="location.href='?province='+this.value;" required>
+                <select name="province" id="province-select" onchange="fetchDistricts(this.value)" required>
                     <option value="">Chọn tỉnh</option>
                     <?php foreach($provinces as $p): ?>
                         <option value="<?php echo $p['province_id']; ?>" <?php if($p['province_id']==$province_filter) echo 'selected'; ?>>
@@ -310,7 +329,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
 
             <div class="detail-item">
                 <span class="label">Huyện:</span>
-                <select name="district" onchange="location.href='?province=<?php echo $province_filter; ?>&district='+this.value;" required>
+                <select name="district" id="district-select" onchange="fetchWards(this.value)" required>
                     <option value="">Chọn huyện</option>
                     <?php foreach($districts as $d): ?>
                         <option value="<?php echo $d['district_id']; ?>" <?php if($d['district_id']==$district_filter) echo 'selected'; ?>>
@@ -322,7 +341,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
 
             <div class="detail-item">
                 <span class="label">Xã:</span>
-                <select name="ward" required>
+                <select name="ward" id="ward-select" required>
                     <option value="">Chọn xã</option>
                     <?php foreach($wards as $w): ?>
                         <option value="<?php echo $w['ward_id']; ?>" <?php if($w['ward_id']==$ward_filter) echo 'selected'; ?>>
@@ -336,35 +355,24 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
             <!-- Upload ảnh -->
             <div class="detail-item">
                 <span class="label">Ảnh (tối đa 10):</span>
-                <div id="image-wrapper">
-                    <!-- Input ảnh được tạo bằng JS -->
-                </div>
-                <button type="button" class="add-file-btn" onclick="addImageInput()">➕ Thêm ảnh</button>
-            </div>
-
-            <!-- Preview ảnh -->
-            <div class="detail-item">
-                <span class="label">Preview Ảnh:</span>
-                <div id="image-preview-container" class="preview-container">
-                    <!-- Vị trí hiển thị ảnh xem trước -->
+                <div style="flex: 1;">
+                    <div id="image-wrapper">
+                        <!-- Input ảnh được tạo bằng JS -->
+                    </div>
+                    <!-- Các hàm JS addImageInput/addVideoInput/removeFileInput phải được định nghĩa trong file JS mới -->
+                    <button type="button" class="add-file-btn" onclick="addImageInput()">➕ Thêm ảnh</button>
                 </div>
             </div>
 
             <?php if($allow_video): ?>
             <!-- Upload video -->
             <div class="detail-item">
-                <span class="label">Video (có thể thêm nhiều):</span>
-                <div id="video-wrapper">
-                    <!-- Input video được tạo bằng JS -->
-                </div>
-                <button type="button" class="add-file-btn" onclick="addVideoInput()">➕ Thêm video</button>
-            </div>
-
-            <!-- Preview video -->
-            <div class="detail-item">
-                <span class="label">Preview Video:</span>
-                <div id="video-preview-container" class="preview-container">
-                    <!-- Vị trí hiển thị video xem trước -->
+                <span class="label">Video (tối đa 5):</span>
+                <div style="flex: 1;">
+                    <div id="video-wrapper">
+                        <!-- Input video được tạo bằng JS -->
+                    </div>
+                    <button type="button" class="add-file-btn" onclick="addVideoInput()">➕ Thêm video</button>
                 </div>
             </div>
             <?php endif; ?>
@@ -379,137 +387,112 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['submit'])){
 <script>
 ClassicEditor.create(document.querySelector('#description'));
 
-let fileInputCounter = 0;
+// ======================= LOGIC AJAX (GIỮ LẠI TRONG PHP VÌ NÓ THAY ĐỔI THEO DATA PHP) =======================
 
-// Hàm hiển thị thông báo thay thế alert()
-function displayFileLimitMessage(message) {
-    const msgDiv = document.getElementById('file-limit-message');
-    msgDiv.textContent = message;
-    msgDiv.style.display = 'block';
-    // Xóa thông báo sau 4 giây
-    setTimeout(() => msgDiv.style.display = 'none', 4000); 
+// Hàm reset một dropdown
+function resetDropdown(elementId, defaultText, isEnabled = true) {
+    const select = document.getElementById(elementId);
+    select.innerHTML = '';
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = defaultText;
+    select.appendChild(defaultOption);
+    select.disabled = !isEnabled;
 }
 
-// Hàm xử lý khi file được chọn (tạo preview)
-function handleFileChange(inputElement, type) {
-    const file = inputElement.files[0];
-    const uniqueId = inputElement.getAttribute('data-id');
-    const previewContainerId = type === 'images' ? 'image-preview-container' : 'video-preview-container';
-    const container = document.getElementById(previewContainerId);
-
-    // Xóa preview cũ (nếu có)
-    const existingPreview = document.getElementById(`preview-${uniqueId}`);
-    if (existingPreview) {
-        existingPreview.remove();
-    }
-
-    if (!file) return; // File cleared
-
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-        const previewElement = document.createElement('div');
-        previewElement.id = `preview-${uniqueId}`;
-        previewElement.className = 'file-preview-item';
-
-        if (type === 'images') {
-            previewElement.innerHTML = `<img src="${e.target.result}" alt="Ảnh xem trước" class="preview-thumbnail">`;
-        } else { // videos
-            previewElement.innerHTML = `<video src="${e.target.result}" controls class="preview-thumbnail"></video>`;
-        }
-        
-        container.appendChild(previewElement);
-    };
-
-    reader.readAsDataURL(file);
-}
-
-// Hàm tạo khung input file mới
-function createFileInputGroup(name) {
-    const uniqueId = `file-${fileInputCounter++}`;
+/**
+ * Gửi yêu cầu AJAX để lấy danh sách địa điểm (Huyện hoặc Xã)
+ */
+function fetchLocations(parentId, type, childSelectId, nextSelectId) {
+    // Địa chỉ của file PHP xử lý AJAX (CẦN TẠO FILE NÀY TRÊN SERVER)
+    const apiUrl = '../include/fetch_locations_ajax.php'; 
     
-    const group = document.createElement('div');
-    group.className = 'file-input-group';
-    
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.name = name + '[]';
-    input.setAttribute('data-id', uniqueId); // Gán ID để link với preview
-    input.accept = name === 'images' ? 'image/*' : 'video/*';
-    input.onchange = (e) => handleFileChange(e.target, name);
-
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.className = 'remove-file-btn';
-    removeBtn.textContent = '✖';
-    removeBtn.onclick = function() { removeFileInput(this); };
-
-    group.appendChild(input);
-    group.appendChild(removeBtn);
-    return group;
-}
-
-// Xóa khung input file VÀ preview
-function removeFileInput(button) {
-    const wrapper = button.closest('#image-wrapper') || button.closest('#video-wrapper');
-    const group = button.parentNode;
-    const inputElement = group.querySelector('input[type="file"]');
-    const uniqueId = inputElement ? inputElement.getAttribute('data-id') : null;
-    
-    // 1. Xóa preview element
-    if (uniqueId) {
-        const previewElement = document.getElementById(`preview-${uniqueId}`);
-        if (previewElement) {
-            previewElement.remove();
+    // Reset dropdown con và dropdown cháu
+    resetDropdown(childSelectId, `Đang tải ${type}...`, false);
+    if (nextSelectId) {
+        if (nextSelectId === 'ward-select') {
+            resetDropdown(nextSelectId, 'Chọn xã');
+        } else if (nextSelectId === 'district-select') {
+            resetDropdown(nextSelectId, 'Chọn huyện');
         }
     }
 
-    // 2. Xóa input field hoặc reset
-    if (wrapper.children.length > 1) {
-        wrapper.removeChild(group);
-    } else {
-        // Nếu chỉ còn 1 field, reset giá trị
-        if (inputElement) inputElement.value = '';
+    if (!parentId || parentId == 0) {
+        resetDropdown(childSelectId, `Chọn ${type}`);
+        return;
     }
+
+    // Gửi request AJAX
+    // type: 'district' hoặc 'ward'
+    const requestType = type === 'Huyện' ? 'district' : 'ward'; 
+
+    fetch(apiUrl + `?parent_id=${parentId}&type=${requestType}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Mạng hoặc server response bị lỗi.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const childSelect = document.getElementById(childSelectId);
+            childSelect.disabled = false;
+            resetDropdown(childSelectId, `Chọn ${type}`); // Reset lại option "Chọn..."
+
+            if (data && data.length > 0) {
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    // Tùy thuộc vào 'type', sử dụng đúng ID
+                    if (type === 'Huyện') {
+                        option.value = item.district_id;
+                    } else if (type === 'Xã') {
+                        option.value = item.ward_id;
+                    }
+                    option.textContent = item.name;
+                    childSelect.appendChild(option);
+                });
+            } else {
+                // Sử dụng hàm báo lỗi (từ file JS mới)
+                if (typeof displayFileLimitMessage === 'function') {
+                    displayFileLimitMessage(`Không tìm thấy ${type} đang hoạt động trong khu vực này.`);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi tải dữ liệu địa điểm:', error);
+            document.getElementById(childSelectId).disabled = false;
+            resetDropdown(childSelectId, `Lỗi tải ${type}`);
+            // Sử dụng hàm báo lỗi (từ file JS mới)
+            if (typeof displayFileLimitMessage === 'function') {
+                 displayFileLimitMessage(`Lỗi kết nối khi tải ${type}. Vui lòng kiểm tra file AJAX.`);
+            }
+        });
 }
 
-// Thêm input ảnh
-function addImageInput() {
-    let wrapper = document.getElementById('image-wrapper');
-    // Giới hạn 10 input ảnh (chưa kể input đầu tiên nếu nó đã có)
-    if (wrapper.children.length < 10) { 
-        let newGroup = createFileInputGroup('images');
-        wrapper.appendChild(newGroup);
-    } else {
-        displayFileLimitMessage('Bạn chỉ có thể thêm tối đa 10 ảnh.');
-    }
+function fetchDistricts(provinceId) {
+    fetchLocations(provinceId, 'Huyện', 'district-select', 'ward-select');
 }
 
-// Thêm input video
-function addVideoInput() {
-    let wrapper = document.getElementById('video-wrapper');
-    // Giới hạn 5 input video
-    if (wrapper.children.length < 5) { 
-        let newGroup = createFileInputGroup('videos');
-        wrapper.appendChild(newGroup);
-    } else {
-        displayFileLimitMessage('Bạn chỉ có thể thêm tối đa 5 video.');
-    }
+function fetchWards(districtId) {
+    fetchLocations(districtId, 'Xã', 'ward-select', null);
 }
 
-// Khởi tạo ban đầu
+// Khởi tạo lại dropdown nếu có giá trị cũ từ POST (cho trường hợp lỗi)
 document.addEventListener('DOMContentLoaded', function() {
-    // Luôn đảm bảo có ít nhất 1 khung nhập cho Ảnh
-    const imageWrapper = document.getElementById('image-wrapper');
-    if (imageWrapper.children.length === 0) {
-        imageWrapper.appendChild(createFileInputGroup('images'));
-    }
+    const provinceId = document.getElementById('province-select').value;
+    const districtId = document.getElementById('district-select').value;
     
-    // Nếu cho phép video, đảm bảo có ít nhất 1 khung nhập cho Video
-    const videoWrapper = document.getElementById('video-wrapper');
-    // Kiểm tra xem videoWrapper có tồn tại không (chỉ tồn tại nếu $allow_video là true)
-    if (videoWrapper && videoWrapper.children.length === 0) {
-        videoWrapper.appendChild(createFileInputGroup('videos'));
+    // Nếu có giá trị cũ, không cần gọi AJAX lần đầu, vì PHP đã pre-populate (đoạn code ở trên)
+    // Nhưng cần ensure các dropdown con bị disable nếu dropdown cha chưa được chọn
+    if (!provinceId) {
+        resetDropdown('district-select', 'Chọn huyện', false);
+        resetDropdown('ward-select', 'Chọn xã', false);
+    } else if (!districtId) {
+         resetDropdown('ward-select', 'Chọn xã', false);
     }
 });
+
 </script>
+
+<!-- Thêm liên kết đến file JavaScript mới cho logic File Preview -->
+<script src="../include/js/file_preview_logic.js"></script>
+

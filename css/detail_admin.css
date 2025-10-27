@@ -28,23 +28,13 @@
 }
 
 .detail-left {
-    flex: 0 0 70%;
+    flex: 0 0 100%;
 }
 
 .detail-right {
-    flex: 0 0 30%;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    display: none; 
 }
 
-.detail-right img,
-.detail-right video {
-    max-width: 100%;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-}
 
 /* ---------------------------------- */
 /* 3. Các item thông tin */
@@ -123,9 +113,49 @@
     background-color: #ffc107;
     color: #000;
 }
-/* * Styles cho khu vực xem trước ảnh/video
- * Dán các styles này vào file detail_admin.css 
- */
+
+/* ----------------------------------------------------
+   CÁC QUY TẮC CSS DÀNH CHO CHỨC NĂNG THÊM FILE VÀ PREVIEW
+   ---------------------------------------------------- */
+
+/* CSS cho nhóm input file và nút xóa */
+.file-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+.file-input-group input[type="file"] {
+    flex-grow: 1;
+}
+
+/* Nút xóa input file */
+.remove-file-btn {
+    background-color: #dc3545; /* Đỏ */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    line-height: 1;
+    font-size: 1.2rem;
+}
+
+/* Nút thêm file */
+.add-file-btn {
+    background-color: #007bff; /* Xanh dương */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+/* ---------------------------------- */
+/* 6. Styles cho khu vực xem trước file mới */
+/* ---------------------------------- */
 
 /* Khu vực chứa tất cả các file preview (ảnh/video) */
 .file-preview-container {
@@ -135,7 +165,7 @@
     padding: 10px;
     border: 1px dashed #ccc; /* Viền nét đứt nhẹ */
     border-radius: 8px;
-    margin-top: 15px;
+    margin-top: 5px; 
     background-color: #fcfcfc;
     min-height: 50px; /* Chiều cao tối thiểu khi chưa có file */
     align-items: center; 
@@ -146,38 +176,45 @@
 .preview-item {
     border: 1px solid #ddd;
     border-radius: 6px;
-    padding: 5px;
-    max-width: 120px; /* Giới hạn chiều rộng cho thumbnail */
-    width: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    width: 100px; /* Kích thước cố định */
+    height: 100px;
     overflow: hidden;
+    position: relative; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     text-align: center;
     transition: transform 0.2s;
+    cursor: default;
 }
+
 .preview-item:hover {
-    transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Ảnh và Video thumbnail */
-.preview-item img, .preview-item video {
+/* Hình ảnh và video bên trong khung preview */
+.preview-thumbnail {
     display: block;
     width: 100%;
-    height: auto;
-    max-height: 90px; /* Giới hạn chiều cao của thumbnail media */
-    object-fit: cover; /* Đảm bảo hình ảnh/video lấp đầy khung */
-    border-radius: 4px;
-    margin-bottom: 5px;
+    height: 100%; /* Lấp đầy khung */
+    object-fit: cover; 
+    border-radius: 4px 4px 0 0; 
+    margin: 0;
     background-color: #eee;
 }
 
-/* Tên file */
+/* Tên file (sử dụng vị trí absolute) */
 .file-name {
-    display: block;
-    font-size: 0.7rem; /* Kích thước nhỏ hơn */
-    color: #6c757d;
-    white-space: nowrap; /* Ngăn xuống dòng */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 10px;
+    padding: 2px 0;
+    text-align: center;
+    line-height: 1.2;
+    z-index: 10;
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Thêm dấu ba chấm */
-    padding: 0 2px;
+    text-overflow: ellipsis;
 }
